@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:study_sync/components/auth/auth_heading.dart';
-import 'package:study_sync/components/auth/footer.dart';
-import 'package:study_sync/components/auth/input_box.dart';
-import 'package:study_sync/components/auth/logo.dart';
-import 'package:study_sync/components/auth/submit_button.dart';
-import 'package:study_sync/pages/login_page.dart';
+
+import '../components/auth/auth_heading.dart';
+import '../components/auth/footer.dart';
+import '../components/auth/input_box.dart';
+import '../components/auth/logo.dart';
+import '../components/auth/submit_button.dart';
+import '../controllers/auth_controller.dart';
+import 'home_page.dart';
 
 class SignupPage extends StatelessWidget {
   SignupPage({super.key});
@@ -14,7 +16,37 @@ class SignupPage extends StatelessWidget {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  void signUserUp() {}
+  final _authController = AuthController();
+
+  void signUserUp(BuildContext context) async {
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
+
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      // TODO: Add a snackbar
+      print('all fields are required');
+      return;
+    }
+
+    if (password != confirmPassword) {
+      // TODO: Add a snackbar
+      print('passwords do not match');
+      return;
+    }
+
+    await _authController.signUp(name, email, password, confirmPassword);
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
+      ),
+    );
+  }
 
   void navigateToLogin(BuildContext context) {
     Navigator.pop(context);
@@ -77,7 +109,7 @@ class SignupPage extends StatelessWidget {
               // sign in button
               SubmitButton(
                 label: 'Sign Up',
-                onTap: signUserUp,
+                onTap: () => signUserUp(context),
               ),
 
               const SizedBox(height: 50),

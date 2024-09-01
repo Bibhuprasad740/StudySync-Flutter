@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:study_sync/components/auth/auth_heading.dart';
-import 'package:study_sync/components/auth/footer.dart';
-import 'package:study_sync/components/auth/input_box.dart';
-import 'package:study_sync/components/auth/logo.dart';
-import 'package:study_sync/components/auth/square_tile.dart';
-import 'package:study_sync/components/auth/submit_button.dart';
-import 'package:study_sync/pages/signup_page.dart';
+
+import '../components/auth/auth_heading.dart';
+import '../components/auth/footer.dart';
+import '../components/auth/input_box.dart';
+import '../components/auth/logo.dart';
+import '../components/auth/square_tile.dart';
+import '../components/auth/submit_button.dart';
+import '../controllers/auth_controller.dart';
+import './home_page.dart';
+import './signup_page.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -13,18 +16,42 @@ class LoginPage extends StatelessWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void signUserIn() {
-    // TODO: Implement login logic here
-    print('User logged in');
+  final _authController = AuthController();
+
+  void signUserIn(BuildContext context) async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      // TODO: Add a snackbar
+      print('Please enter both fields');
+      return;
+    }
+    await _authController.signIn(
+      emailController.text,
+      passwordController.text,
+    );
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
+      ),
+    );
   }
 
-  void navigateToSignUp(BuildContext context) {
+  void navigateToSignUp(BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SignupPage(),
       ),
     );
+  }
+
+  void navigateToForgotPassword(BuildContext context) async {
+    final authValue = await _authController.getAuth();
+
+    print(authValue);
   }
 
   @override
@@ -70,12 +97,15 @@ class LoginPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: Colors.blue[700],
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () => navigateToForgotPassword(context),
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyle(
+                          color: Colors.blue[700],
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -87,7 +117,7 @@ class LoginPage extends StatelessWidget {
               // sign in button
               SubmitButton(
                 label: 'Sign In',
-                onTap: signUserIn,
+                onTap: () => signUserIn(context),
               ),
 
               const SizedBox(height: 50),
