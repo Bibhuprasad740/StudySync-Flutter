@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:study_sync/pages/home_page.dart';
-import 'package:study_sync/pages/signup_page.dart';
 
 import '../components/auth/auth_heading.dart';
 import '../components/auth/footer.dart';
@@ -10,6 +7,8 @@ import '../components/auth/logo.dart';
 import '../components/auth/square_tile.dart';
 import '../components/auth/submit_button.dart';
 import '../controllers/auth_controller.dart';
+import './home_page.dart';
+import './signup_page.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -20,7 +19,15 @@ class LoginPage extends StatelessWidget {
   final _authController = AuthController();
 
   void signUserIn(BuildContext context) async {
-    final response = await _authController.signIn(
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      // TODO: Add a snackbar
+      print('Please enter both fields');
+      return;
+    }
+    await _authController.signIn(
       emailController.text,
       passwordController.text,
     );
@@ -42,8 +49,6 @@ class LoginPage extends StatelessWidget {
   }
 
   void navigateToForgotPassword(BuildContext context) async {
-    // await _authController.removeAuth();
-
     final authValue = await _authController.getAuth();
 
     print(authValue);

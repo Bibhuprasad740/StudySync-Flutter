@@ -38,9 +38,6 @@ class AuthController {
     String password,
     String confirmPassword,
   ) async {
-    if (password != confirmPassword) {
-      throw Exception('Passwords do not match.');
-    }
     try {
       final signUpUrl =
           dotenv.env['BACKEND_BASE_URL']! + dotenv.env['signUpEndpoint']!;
@@ -54,7 +51,7 @@ class AuthController {
         },
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         await saveAuth(response.data);
         return response;
       } else {
