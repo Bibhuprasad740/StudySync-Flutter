@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController {
   final Dio _dio = Dio(
@@ -120,6 +121,41 @@ class AuthController {
       print('This is the error: ${error.response}');
       throw Exception(error.response?.data['message']);
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Google sign in
+  Future<Response> googleSignIn() async {
+    try {
+      // begin interactive sign in process
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+
+      // collect the access token from the response
+      final accessToken = googleAuth.accessToken;
+
+      final signInUrl =
+          dotenv.env['BACKEND_BASE_URL']! + dotenv.env['googleSignInEndpoint']!;
+      final response = await _dio.post(
+        signInUrl,
+        data: {'accessToken': accessToken},
+      );
+
+      if (response.statusCode == 200) {
+        await saveAuth(response.data);
+        return response;
+      } else {
+        throw Exception('Failed to sign in.');
+      }
+
+      // sign the user in using the email
+    } on DioException catch (error) {
+      print('This is the error: ${error.response}');
+      throw Exception(error.response?.data['message']);
+    } catch (error) {
       rethrow;
     }
   }
