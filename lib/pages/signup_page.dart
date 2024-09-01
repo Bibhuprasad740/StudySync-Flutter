@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:study_sync/components/auth/auth_heading.dart';
-import 'package:study_sync/components/auth/footer.dart';
-import 'package:study_sync/components/auth/input_box.dart';
-import 'package:study_sync/components/auth/logo.dart';
-import 'package:study_sync/components/auth/submit_button.dart';
-import 'package:study_sync/pages/login_page.dart';
+
+import '../components/auth/auth_heading.dart';
+import '../components/auth/footer.dart';
+import '../components/auth/input_box.dart';
+import '../components/auth/logo.dart';
+import '../components/auth/submit_button.dart';
 
 class SignupPage extends StatelessWidget {
   SignupPage({super.key});

@@ -1,7 +1,27 @@
+// Flutter core
 import 'package:flutter/material.dart';
-import './pages/login_page.dart';
 
-void main() {
+// packages
+// dotenv package
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+// firebase package
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+// pages
+import 'pages/auth_screen.dart';
+
+void main() async {
+  // firebase initialization
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // dotenv load
+  await dotenv.load();
+
   runApp(const StudySync());
 }
 
@@ -10,9 +30,9 @@ class StudySync extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: AuthScreen(),
     );
   }
 }
