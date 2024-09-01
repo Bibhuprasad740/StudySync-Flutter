@@ -39,6 +39,16 @@ class LoginPage extends StatelessWidget {
     );
   }
 
+  void googleSignIn(BuildContext context) async {
+    await _authController.googleSignIn();
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
+      ),
+    );
+  }
+
   void navigateToSignUp(BuildContext context) async {
     Navigator.push(
       context,
@@ -153,7 +163,8 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 20),
 
               // sign in with google button
-              const SquareTile(
+              SquareTile(
+                onTap: () => googleSignIn(context),
                 imagePath: 'assets/google.png',
               ),
 
