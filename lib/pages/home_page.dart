@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../controllers/auth_controller.dart';
+import '../errors/api_response.dart';
+import '../utils/utils.dart';
 import 'login_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,13 +11,17 @@ class HomePage extends StatelessWidget {
   final _authController = AuthController();
 
   void logoutUser(BuildContext context) async {
-    await _authController.logout();
+    ApiResponse response = await _authController.logout();
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => LoginPage(),
-      ),
-    );
+    if (response.statusCode == 200) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+      );
+    } else {
+      showSnackBar(context, response.message);
+    }
   }
 
   @override

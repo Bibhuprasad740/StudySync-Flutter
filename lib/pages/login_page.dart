@@ -7,6 +7,8 @@ import '../components/auth/logo.dart';
 import '../components/auth/square_tile.dart';
 import '../components/auth/submit_button.dart';
 import '../controllers/auth_controller.dart';
+import '../errors/api_response.dart';
+import '../utils/utils.dart';
 import './home_page.dart';
 import './signup_page.dart';
 
@@ -23,30 +25,38 @@ class LoginPage extends StatelessWidget {
     final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      // TODO: Add a snackbar
-      print('Please enter both fields');
+      showSnackBar(context, 'All Fields are required!');
       return;
     }
-    await _authController.signIn(
+
+    ApiResponse response = await _authController.signIn(
       emailController.text,
       passwordController.text,
     );
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
+    if (response.statusCode == 200) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    } else {
+      showSnackBar(context, response.message);
+    }
   }
 
   void googleSignIn(BuildContext context) async {
-    await _authController.googleSignIn();
+    ApiResponse response = await _authController.googleSignIn();
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
+    if (response.statusCode == 200) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    } else {
+      showSnackBar(context, response.message);
+    }
   }
 
   void navigateToSignUp(BuildContext context) async {

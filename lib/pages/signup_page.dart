@@ -6,6 +6,8 @@ import '../components/auth/input_box.dart';
 import '../components/auth/logo.dart';
 import '../components/auth/submit_button.dart';
 import '../controllers/auth_controller.dart';
+import '../errors/api_response.dart';
+import '../utils/utils.dart';
 import 'home_page.dart';
 
 class SignupPage extends StatelessWidget {
@@ -28,24 +30,27 @@ class SignupPage extends StatelessWidget {
         email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
-      // TODO: Add a snackbar
-      print('all fields are required');
+      showSnackBar(context, 'All fields are required!');
       return;
     }
 
     if (password != confirmPassword) {
-      // TODO: Add a snackbar
-      print('passwords do not match');
+      showSnackBar(context, 'Passwords do not match');
       return;
     }
 
-    await _authController.signUp(name, email, password, confirmPassword);
+    ApiResponse response =
+        await _authController.signUp(name, email, password, confirmPassword);
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
+    if (response.statusCode == 200) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    } else {
+      showSnackBar(context, response.message);
+    }
   }
 
   void navigateToLogin(BuildContext context) {
