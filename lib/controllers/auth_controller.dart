@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../errors/api_response.dart';
+
 class AuthController {
   final Dio _dio = Dio(
     BaseOptions(baseUrl: dotenv.env['API_BASE_URL'] ?? ''),
@@ -33,7 +35,7 @@ class AuthController {
   }
 
   // Sign Up Method
-  Future<Response> signUp(
+  Future<ApiResponse> signUp(
     String name,
     String email,
     String password,
@@ -54,20 +56,22 @@ class AuthController {
 
       if (response.statusCode == 200) {
         await saveAuth(response.data);
-        return response;
+        return ApiResponse(statusCode: 200, message: 'Sign up successful');
       } else {
-        throw Exception('Failed to sign up.');
+        return ApiResponse(
+            statusCode: response.statusCode!, message: 'Sign up failed');
       }
     } on DioException catch (error) {
-      print('This is the error: ${error.response}');
-      throw Exception(error.response?.data['message']);
+      return ApiResponse(
+        statusCode: error.response?.statusCode ?? 500,
+        message: error.response?.data['message'] ?? 'Sign up failed with error',
+      );
     } catch (error) {
-      rethrow;
+      return ApiResponse(statusCode: 500, message: 'Something went wrong');
     }
   }
 
-  // Sign In Method
-  Future<Response> signIn(String email, String password) async {
+  Future<ApiResponse> signIn(String email, String password) async {
     try {
       final signInUrl =
           dotenv.env['BACKEND_BASE_URL']! + dotenv.env['signInEndpoint']!;
@@ -81,60 +85,62 @@ class AuthController {
 
       if (response.statusCode == 200) {
         await saveAuth(response.data);
-        return response;
+        return ApiResponse(statusCode: 200, message: 'Sign in successful');
       } else {
-        throw Exception('Failed to sign in.');
+        return ApiResponse(
+            statusCode: response.statusCode!, message: 'Sign in failed');
       }
     } on DioException catch (error) {
-      print('This is the error: ${error.response}');
-      throw Exception(error.response?.data['message']);
+      return ApiResponse(
+        statusCode: error.response?.statusCode ?? 500,
+        message: error.response?.data['message'] ?? 'Sign in failed with error',
+      );
     } catch (error) {
-      rethrow;
+      return ApiResponse(statusCode: 500, message: 'Something went wrong');
     }
   }
 
-  // Logout Method
-  Future<void> logout() async {
+  Future<ApiResponse> logout() async {
     try {
       final storedAuth = await getAuth();
       if (storedAuth == null) {
-        throw Exception('No auth token found!');
+        return ApiResponse(statusCode: 400, message: 'No auth token found!');
       }
 
       final user = jsonDecode(storedAuth);
-
       final logoutUrl =
           dotenv.env['BACKEND_BASE_URL']! + dotenv.env['logoutEndpoint']!;
 
       _dio.options.headers['authorization'] = 'Bearer ${user['token']}';
 
-      final response = await _dio.post(
-        logoutUrl,
-      );
+      final response = await _dio.post(logoutUrl);
 
       if (response.statusCode == 200) {
         await removeAuth();
+        return ApiResponse(statusCode: 200, message: 'Logged out successfully');
       } else {
-        throw Exception('Failed to sign in.');
+        return ApiResponse(
+            statusCode: response.statusCode!, message: 'Logout failed');
       }
     } on DioException catch (error) {
-      print('This is the error: ${error.response}');
-      throw Exception(error.response?.data['message']);
-    } catch (e) {
-      rethrow;
+      return ApiResponse(
+        statusCode: error.response?.statusCode ?? 500,
+        message: error.response?.data['message'] ?? 'Logout failed with error',
+      );
+    } catch (error) {
+      return ApiResponse(statusCode: 500, message: 'Something went wrong');
     }
   }
 
-  // Google sign in
-  Future<Response> googleSignIn() async {
+  Future<ApiResponse> googleSignIn() async {
     try {
-      // begin interactive sign in process
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        return ApiResponse(statusCode: 400, message: 'Google sign-in aborted');
+      }
 
       final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-
-      // collect the access token from the response
+          await googleUser.authentication;
       final accessToken = googleAuth.accessToken;
 
       final signInUrl =
@@ -146,17 +152,22 @@ class AuthController {
 
       if (response.statusCode == 200) {
         await saveAuth(response.data);
-        return response;
+        return ApiResponse(
+            statusCode: 200, message: 'Google sign-in successful');
       } else {
-        throw Exception('Failed to sign in.');
+        return ApiResponse(
+            statusCode: response.statusCode!, message: 'Google sign-in failed');
       }
-
-      // sign the user in using the email
     } on DioException catch (error) {
-      print('This is the error: ${error.response}');
-      throw Exception(error.response?.data['message']);
+      return ApiResponse(
+        statusCode: error.response?.statusCode ?? 500,
+        message: error.response?.data['message'] ??
+            'Google sign-in failed with error',
+      );
     } catch (error) {
-      rethrow;
+      return ApiResponse(statusCode: 500, message: 'Something went wrong');
     }
   }
+
+  // TODO: Add controller for sign up using google
 }
