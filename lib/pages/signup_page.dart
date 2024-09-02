@@ -8,7 +8,7 @@ import '../components/auth/submit_button.dart';
 import '../controllers/auth_controller.dart';
 import '../errors/api_response.dart';
 import '../utils/utils.dart';
-import 'home_page.dart';
+import './bottom_bar_page.dart';
 
 class SignupPage extends StatelessWidget {
   SignupPage({super.key});
@@ -45,7 +45,7 @@ class SignupPage extends StatelessWidget {
     if (response.statusCode == 200) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => const BottomBarPage(),
         ),
       );
     } else {

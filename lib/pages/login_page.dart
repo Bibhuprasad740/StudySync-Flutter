@@ -9,7 +9,7 @@ import '../components/auth/submit_button.dart';
 import '../controllers/auth_controller.dart';
 import '../errors/api_response.dart';
 import '../utils/utils.dart';
-import './home_page.dart';
+import './bottom_bar_page.dart';
 import './signup_page.dart';
 
 class LoginPage extends StatelessWidget {
@@ -37,7 +37,7 @@ class LoginPage extends StatelessWidget {
     if (response.statusCode == 200) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => BottomBarPage(),
         ),
       );
     } else {
@@ -51,7 +51,7 @@ class LoginPage extends StatelessWidget {
     if (response.statusCode == 200) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => const BottomBarPage(),
         ),
       );
     } else {
