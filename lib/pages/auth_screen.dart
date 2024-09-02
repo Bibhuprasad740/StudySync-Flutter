@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../controllers/auth_controller.dart';
-import 'home_page.dart';
+import 'bottom_bar_page.dart';
 import 'login_page.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
         // If 'auth' token exists, navigate to HomeScreen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => const BottomBarPage()),
         );
       } else {
         // If 'auth' token does not exist, navigate to LoginScreen
