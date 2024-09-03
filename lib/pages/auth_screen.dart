@@ -23,6 +23,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _checkAuth() async {
+    // await _authController.removeAuth();
     final authValue = await _authController.getAuth();
 
     print(authValue);
