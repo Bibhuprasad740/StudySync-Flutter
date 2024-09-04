@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
+import '../controllers/user_controller.dart';
 import 'home_page.dart';
 import 'leaderboard_page.dart';
 import 'profile_page.dart';
@@ -13,6 +14,8 @@ class BottomBarPage extends StatefulWidget {
 }
 
 class _BottomBarPageState extends State<BottomBarPage> {
+  final userController = UserController();
+
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const HomePage(),
@@ -24,6 +27,7 @@ class _BottomBarPageState extends State<BottomBarPage> {
   @override
   void initState() {
     super.initState();
+    userController.ping();
   }
 
   @override
