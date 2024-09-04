@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:study_sync/controllers/revision_controller.dart';
 
+import '../controllers/add_study_data_modal.dart';
 import '../errors/api_response.dart';
 import '../utils/utils.dart';
 
@@ -84,7 +85,7 @@ class _HomePageState extends State<HomePage> {
           ],
         );
       },
-    ).then((value) => value ?? false); // Return false if dialog is dismissed
+    ).then((value) => value ?? false);
   }
 
   @override
@@ -98,6 +99,7 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.black,
       ),
+      backgroundColor: Colors.grey[200],
       body: revisionData == null
           ? const Center(child: CircularProgressIndicator())
           : revisionData!.isEmpty
@@ -114,16 +116,15 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(16.0),
                   itemCount: revisionData!.keys.length,
                   itemBuilder: (context, index) {
-                    // Get the subject name
+                    // Existing list builder code
                     final subject = revisionData!.keys.elementAt(index);
-                    // Get the list of topics for the subject
                     final topics = revisionData![subject] as List<dynamic>;
 
                     return Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      elevation: 2,
+                      elevation: 0,
                       margin: const EdgeInsets.only(bottom: 16),
                       child: ExpansionTile(
                         leading: const Icon(
@@ -188,6 +189,30 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
+      floatingActionButton: FloatingActionButton(
+        focusColor: Colors.amber,
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
+            ),
+            builder: (context) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: AddStudyDataModal(),
+              );
+            },
+          );
+        },
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

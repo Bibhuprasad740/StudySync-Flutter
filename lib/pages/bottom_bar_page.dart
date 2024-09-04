@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-import 'add_study_data_page.dart';
 import 'home_page.dart';
+import 'leaderboard_page.dart';
 import 'profile_page.dart';
 
 class BottomBarPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _BottomBarPageState extends State<BottomBarPage> {
   final List<Widget> _pages = [
     const HomePage(),
     const Center(child: Text('All Studies Page')),
-    AddStudyDataPage(),
+    const LeaderboardPage(),
     const ProfilePage(),
   ];
 
@@ -60,8 +60,9 @@ class _BottomBarPageState extends State<BottomBarPage> {
               text: 'Studies',
             ),
             GButton(
-              icon: Icons.add,
-              text: 'Add',
+              icon: Icons.stars,
+              text: 'Leaderboard',
+              iconColor: Colors.amber,
             ),
             GButton(
               icon: Icons.person,
