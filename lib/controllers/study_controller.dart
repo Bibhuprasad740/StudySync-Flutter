@@ -45,4 +45,46 @@ class StudyController {
       return ApiResponse(statusCode: 500, message: 'Something went wrong');
     }
   }
+
+  Future<ApiResponse> fetchStudyData() async {
+    final storedAuth = await _authController.getAuth();
+    if (storedAuth == null) {
+      return ApiResponse(statusCode: 401, message: 'No credentials available!');
+    }
+
+    try {
+      final user = await jsonDecode(storedAuth);
+      final fetchStudyDataUrl = dotenv.env['BACKEND_BASE_URL']! +
+          dotenv.env['getAllStudyDataEndpoint']!;
+
+      _dio.options.headers['authorization'] = 'Bearer ${user['token']}';
+
+      final response = await _dio.get(fetchStudyDataUrl);
+
+      return ApiResponse(
+        statusCode: response.statusCode!,
+        message: 'Data retrieved successfully',
+        data: response.data,
+      );
+    } on DioException catch (error) {
+      return ApiResponse(
+        statusCode: error.response?.statusCode ?? 500,
+        message: error.response?.data['message'] ?? 'Something went wrong.',
+      );
+    } catch (error) {
+      return ApiResponse(statusCode: 500, message: 'Something went wrong');
+    }
+  }
+
+  Future<ApiResponse> updateStudyData(
+    String id,
+    String topic,
+    String subject,
+    String additionalInfo,
+  ) async {
+    return ApiResponse(
+      statusCode: 501, // Not implemented yet
+      message: 'Updating data is not implemented yet.',
+    );
+  }
 }

@@ -99,7 +99,6 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.black,
       ),
-      backgroundColor: Colors.grey[200],
       body: revisionData == null
           ? const Center(child: CircularProgressIndicator())
           : revisionData!.isEmpty
@@ -145,12 +144,55 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.symmetric(vertical: 2),
                               child: ListTile(
                                 tileColor: Colors.white,
-                                title: Text(
-                                  topic['topic'],
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        topic['topic'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    PopupMenuButton<String>(
+                                      onSelected: (value) {
+                                        if (value == 'edit') {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                top: Radius.circular(16),
+                                              ),
+                                            ),
+                                            builder: (context) {
+                                              return Padding(
+                                                padding: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context)
+                                                      .viewInsets
+                                                      .bottom,
+                                                ),
+                                                child: AddStudyDataModal(
+                                                    initialData: topic),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return {'Edit'}.map((String choice) {
+                                          return PopupMenuItem<String>(
+                                            value: choice.toLowerCase(),
+                                            child: Text(choice),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  ],
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

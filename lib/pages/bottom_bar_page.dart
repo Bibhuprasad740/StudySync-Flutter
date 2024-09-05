@@ -5,6 +5,7 @@ import '../controllers/user_controller.dart';
 import 'home_page.dart';
 import 'leaderboard_page.dart';
 import 'profile_page.dart';
+import 'studies_page.dart';
 
 class BottomBarPage extends StatefulWidget {
   const BottomBarPage({super.key});
@@ -19,7 +20,7 @@ class _BottomBarPageState extends State<BottomBarPage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const HomePage(),
-    const Center(child: Text('All Studies Page')),
+    const StudiesPage(),
     const LeaderboardPage(),
     const ProfilePage(),
   ];
@@ -34,7 +35,6 @@ class _BottomBarPageState extends State<BottomBarPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey[300],
         body: _pages[_currentIndex],
         bottomNavigationBar: GNav(
           gap: 8,

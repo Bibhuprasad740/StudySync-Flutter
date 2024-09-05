@@ -8,15 +8,30 @@ import '../utils/utils.dart';
 import 'study_controller.dart';
 
 class AddStudyDataModal extends StatefulWidget {
+  final Map<String, dynamic>? initialData; // New parameter for editing
+
+  const AddStudyDataModal({super.key, this.initialData});
+
   @override
-  _AddStudyDataModalState createState() => _AddStudyDataModalState();
+  AddStudyDataModalState createState() => AddStudyDataModalState();
 }
 
-class _AddStudyDataModalState extends State<AddStudyDataModal> {
-  final TextEditingController topicController = TextEditingController();
-  final TextEditingController subjectController = TextEditingController();
-  final TextEditingController additionalInfoController =
-      TextEditingController();
+class AddStudyDataModalState extends State<AddStudyDataModal> {
+  late TextEditingController topicController;
+  late TextEditingController subjectController;
+  late TextEditingController additionalInfoController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers with initialData if present
+    topicController =
+        TextEditingController(text: widget.initialData?['topic'] ?? '');
+    subjectController =
+        TextEditingController(text: widget.initialData?['subject'] ?? '');
+    additionalInfoController = TextEditingController(
+        text: widget.initialData?['additionalInfo'] ?? '');
+  }
 
   void addStudyData(BuildContext context) async {
     final topic = topicController.text.trim();
@@ -30,11 +45,22 @@ class _AddStudyDataModalState extends State<AddStudyDataModal> {
 
     final studyController = StudyController();
 
-    ApiResponse response = await studyController.addStudyData(
-      topic,
-      subject,
-      additionalInfo,
-    );
+    ApiResponse response;
+    if (widget.initialData != null) {
+      // If editing, call an update function instead
+      response = await studyController.updateStudyData(
+        widget.initialData!['id'], // Assuming the ID is present in initialData
+        topic,
+        subject,
+        additionalInfo,
+      );
+    } else {
+      response = await studyController.addStudyData(
+        topic,
+        subject,
+        additionalInfo,
+      );
+    }
 
     if (response.statusCode == 200) {
       topicController.clear();
@@ -81,7 +107,9 @@ class _AddStudyDataModalState extends State<AddStudyDataModal> {
             ),
             const SizedBox(height: 25),
             SubmitButton(
-              label: 'Add Study Data',
+              label: widget.initialData == null
+                  ? 'Add Study Data'
+                  : 'Update Study Data',
               onTap: () => addStudyData(context),
             ),
           ],
