@@ -6,14 +6,14 @@ import '../controllers/add_study_data_modal.dart';
 import '../errors/api_response.dart';
 import '../utils/utils.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class RevisionsPage extends StatefulWidget {
+  const RevisionsPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<RevisionsPage> createState() => _RevisionsPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _RevisionsPageState extends State<RevisionsPage> {
   Map<String, dynamic>? revisionData;
   final revisionController = RevisionController();
 
@@ -91,14 +91,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Revisions',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.black,
-      ),
       body: revisionData == null
           ? const Center(child: CircularProgressIndicator())
           : revisionData!.isEmpty
@@ -231,30 +223,6 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-      floatingActionButton: FloatingActionButton(
-        focusColor: Colors.amber,
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
-            ),
-            builder: (context) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: AddStudyDataModal(),
-              );
-            },
-          );
-        },
-        backgroundColor: Colors.amber,
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }
