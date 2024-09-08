@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 import '../controllers/user_controller.dart';
-import 'home_page.dart';
-import 'leaderboard_page.dart';
 import 'profile_page.dart';
+import 'revisions_page.dart';
+import 'leaderboard_page.dart';
+import 'statictics_page.dart';
 import 'studies_page.dart';
 
 class BottomBarPage extends StatefulWidget {
@@ -19,10 +20,10 @@ class _BottomBarPageState extends State<BottomBarPage> {
 
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    const HomePage(),
     const StudiesPage(),
+    const RevisionsPage(),
     const LeaderboardPage(),
-    const ProfilePage(),
+    const StaticticsPage(),
   ];
 
   @override
@@ -35,6 +36,33 @@ class _BottomBarPageState extends State<BottomBarPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text('StudySync'),
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              onPressed: () => {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ProfilePage(),
+                  ),
+                )
+              },
+              icon: const Icon(Icons.mood),
+            ),
+            IconButton(
+              onPressed: () => {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ProfilePage(),
+                  ),
+                )
+              },
+              icon: const Icon(Icons.person_rounded),
+            )
+          ],
+        ),
         body: _pages[_currentIndex],
         bottomNavigationBar: GNav(
           gap: 8,
@@ -57,20 +85,19 @@ class _BottomBarPageState extends State<BottomBarPage> {
           tabs: const [
             GButton(
               icon: Icons.home,
-              text: 'Home',
+              text: 'Studies',
             ),
             GButton(
               icon: Icons.receipt_long,
-              text: 'Studies',
+              text: 'Revisions',
             ),
             GButton(
               icon: Icons.stars,
               text: 'Leaderboard',
-              iconColor: Colors.amber,
             ),
             GButton(
-              icon: Icons.person,
-              text: 'Profile',
+              icon: Icons.data_usage_sharp,
+              text: 'Statistics',
             ),
           ],
         ),

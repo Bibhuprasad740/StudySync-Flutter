@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:study_sync/utils/utils.dart';
 import '../controllers/add_study_data_modal.dart';
 import '../controllers/study_controller.dart';
+import '../utils/utils.dart';
 
 class StudiesPage extends StatefulWidget {
   const StudiesPage({super.key});
@@ -53,13 +53,13 @@ class _StudiesPageState extends State<StudiesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Studies')),
       body: ListView.builder(
         itemCount: groupedStudies.keys.length,
         itemBuilder: (context, index) {
           final subject = groupedStudies.keys.elementAt(index);
           return Card(
             margin: const EdgeInsets.all(10),
+            elevation: 0,
             child: ListTile(
               title: Text(subject),
               onTap: () {
@@ -68,6 +68,30 @@ class _StudiesPageState extends State<StudiesPage> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        focusColor: Colors.amber,
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
+            ),
+            builder: (context) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: const AddStudyDataModal(),
+              );
+            },
+          );
+        },
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.add),
       ),
     );
   }
