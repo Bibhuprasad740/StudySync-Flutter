@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../components/auth/auth_heading.dart';
 import '../components/auth/footer.dart';
 import '../components/auth/input_box.dart';
 import '../components/auth/logo.dart';
 import '../components/auth/submit_button.dart';
-import '../controllers/auth_controller.dart';
-import '../errors/api_response.dart';
+import '../providers/auth_provider.dart';
 import '../utils/utils.dart';
 import './bottom_bar_page.dart';
 
@@ -17,8 +16,6 @@ class SignupPage extends StatelessWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-
-  final _authController = AuthController();
 
   void signUserUp(BuildContext context) async {
     final name = nameController.text.trim();
@@ -39,8 +36,9 @@ class SignupPage extends StatelessWidget {
       return;
     }
 
-    ApiResponse response =
-        await _authController.signUp(name, email, password, confirmPassword);
+    // Access AuthProvider for signup functionality
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final response = await authProvider.signUp(name, email, password);
 
     if (response.statusCode == 200) {
       Navigator.of(context).pushReplacement(
@@ -111,7 +109,7 @@ class SignupPage extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              // sign in button
+              // sign up button
               SubmitButton(
                 label: 'Sign Up',
                 onTap: () => signUserUp(context),

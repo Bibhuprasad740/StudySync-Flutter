@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
-import '../controllers/auth_controller.dart';
+import '../providers/auth_provider.dart';
 import 'bottom_bar_page.dart';
 import 'login_page.dart';
 
@@ -13,9 +13,6 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final _storage = const FlutterSecureStorage();
-  final _authController = AuthController();
-
   @override
   void initState() {
     super.initState();
@@ -23,22 +20,20 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _checkAuth() async {
-    // await _authController.removeAuth();
-    final authValue = await _authController.getAuth();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    print(authValue);
     try {
-      // Check if 'auth' key exists in secure storage
-      String? authToken = await _storage.read(key: 'auth');
+      // Load authentication data from secure storage
+      await authProvider.loadAuth();
 
-      if (authToken != null) {
-        // If 'auth' token exists, navigate to HomeScreen
+      if (authProvider.isAuthenticated) {
+        // If the user is authenticated, navigate to the HomeScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const BottomBarPage()),
         );
       } else {
-        // If 'auth' token does not exist, navigate to LoginScreen
+        // If the user is not authenticated, navigate to the LoginScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),

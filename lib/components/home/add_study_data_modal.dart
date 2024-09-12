@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../components/auth/auth_heading.dart';
-import '../components/auth/input_box.dart';
-import '../components/auth/submit_button.dart';
-import '../errors/api_response.dart';
-import '../utils/utils.dart';
-import 'study_controller.dart';
+import '../auth/auth_heading.dart';
+import '../auth/input_box.dart';
+import '../auth/submit_button.dart';
+import '../../errors/api_response.dart';
+import '../../utils/utils.dart';
+import '../../controllers/study_controller.dart';
 
 class AddStudyDataModal extends StatefulWidget {
   final Map<String, dynamic>? initialData; // New parameter for editing

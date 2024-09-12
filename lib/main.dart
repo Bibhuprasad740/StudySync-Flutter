@@ -7,10 +7,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // firebase package
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 // pages
 import 'pages/auth_screen.dart';
+
+// providers
+import 'providers/auth_provider.dart';
+import 'providers/study_provider.dart';
+import 'providers/user_provider.dart';
 
 void main() async {
   // firebase initialization
@@ -30,9 +36,23 @@ class StudySync extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AuthScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider<StudyProvider>(
+          create: (context) => StudyProvider(
+            Provider.of<AuthProvider>(
+              context,
+              listen: false,
+            ), // Passing AuthProvider to StudyProvider
+          ),
+        ),
+      ],
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: AuthScreen(),
+      ),
     );
   }
 }

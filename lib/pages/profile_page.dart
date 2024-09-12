@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../controllers/auth_controller.dart';
+import 'package:provider/provider.dart';
 import '../errors/api_response.dart';
+import '../providers/auth_provider.dart';
 import '../utils/utils.dart';
 import 'login_page.dart';
 
@@ -13,7 +13,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Map<String, dynamic>? user;
+  Map<String, dynamic>? userInfo;
 
   @override
   void initState() {
@@ -21,20 +21,19 @@ class _ProfilePageState extends State<ProfilePage> {
     _loadUserData();
   }
 
-  void _loadUserData() async {
-    final _authController = AuthController();
-    final authValue = await _authController.getAuth();
+  void _loadUserData() {
+    // Get the AuthProvider instance from the provider
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.user;
 
-    if (authValue == null) {
+    if (user == null) {
       // Handle case where authValue is null (e.g., navigate to login page)
       Navigator.of(context).pushReplacementNamed('/login');
       return;
     }
 
-    final userData = jsonDecode(authValue);
-
     setState(() {
-      user = userData;
+      userInfo = user;
     });
   }
 
@@ -43,7 +42,9 @@ class _ProfilePageState extends State<ProfilePage> {
     bool confirmLogout = await showLogoutConfirmationDialog(context);
 
     if (confirmLogout) {
-      ApiResponse response = await AuthController().logout();
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      ApiResponse response = await authProvider.logout();
 
       if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
@@ -87,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: user == null
+        body: userInfo == null
             ? const Center(child: CircularProgressIndicator())
             : Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -113,21 +114,21 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Email: ${user!['email']}',
+                            Text('Email: ${userInfo!['email']}',
                                 style: const TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
                             const Text('Token:',
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w500)),
-                            SelectableText(user!['token'],
+                            SelectableText(userInfo!['token'],
                                 style: TextStyle(
                                     fontSize: 14, color: Colors.grey[700])),
                             const SizedBox(height: 8),
                             const Text('Expires In:',
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w500)),
-                            Text(user!['expiresIn'],
+                            Text(userInfo!['expiresIn'],
                                 style: TextStyle(
                                     fontSize: 14, color: Colors.grey[700])),
                           ],

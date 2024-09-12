@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../components/auth/auth_heading.dart';
 import '../components/auth/footer.dart';
 import '../components/auth/input_box.dart';
 import '../components/auth/logo.dart';
 import '../components/auth/square_tile.dart';
 import '../components/auth/submit_button.dart';
-import '../controllers/auth_controller.dart';
-import '../errors/api_response.dart';
+import '../providers/auth_provider.dart';
 import '../utils/utils.dart';
-import './bottom_bar_page.dart';
-import './signup_page.dart';
+import 'bottom_bar_page.dart';
+import 'signup_page.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
-  final _authController = AuthController();
 
   void signUserIn(BuildContext context) async {
     final email = emailController.text.trim();
@@ -29,15 +26,17 @@ class LoginPage extends StatelessWidget {
       return;
     }
 
-    ApiResponse response = await _authController.signIn(
-      emailController.text,
-      passwordController.text,
-    );
+    // Get the AuthProvider instance from the provider
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Call the sign-in method from the provider
+    final response = await authProvider.signIn(email, password);
 
     if (response.statusCode == 200) {
-      Navigator.of(context).push(
+      // Navigate to the BottomBarPage upon successful sign-in
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => BottomBarPage(),
+          builder: (context) => const BottomBarPage(),
         ),
       );
     } else {
@@ -46,7 +45,11 @@ class LoginPage extends StatelessWidget {
   }
 
   void googleSignIn(BuildContext context) async {
-    ApiResponse response = await _authController.googleSignIn();
+    // Get the AuthProvider instance from the provider
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Call the Google sign-in method from the provider
+    final response = await authProvider.googleSignIn();
 
     if (response.statusCode == 200) {
       Navigator.of(context).pushReplacement(
@@ -59,7 +62,7 @@ class LoginPage extends StatelessWidget {
     }
   }
 
-  void navigateToSignUp(BuildContext context) async {
+  void navigateToSignUp(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -69,9 +72,9 @@ class LoginPage extends StatelessWidget {
   }
 
   void navigateToForgotPassword(BuildContext context) async {
-    final authValue = await _authController.getAuth();
-
-    print(authValue);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.user;
+    print(user);
   }
 
   @override
@@ -102,7 +105,7 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              // password
+              // Password text field
               InputBox(
                 controller: passwordController,
                 labelText: 'Password',
@@ -111,7 +114,7 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              // forgot password?
+              // Forgot password?
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Row(
@@ -134,7 +137,7 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              // sign in button
+              // Sign-in button
               SubmitButton(
                 label: 'Sign In',
                 onTap: () => signUserIn(context),
@@ -172,7 +175,7 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // sign in with google button
+              // Google sign-in button
               SquareTile(
                 onTap: () => googleSignIn(context),
                 imagePath: 'assets/google.png',
@@ -180,7 +183,7 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              // Don't have account ? sign up
+              // Don't have an account? Sign up
               Footer(
                 text1: 'Don\'t have an account?',
                 text2: 'Sign Up',

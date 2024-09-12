@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/add_study_data_modal.dart';
+import '../components/home/add_study_data_modal.dart';
 import '../controllers/study_controller.dart';
 import '../utils/utils.dart';
 

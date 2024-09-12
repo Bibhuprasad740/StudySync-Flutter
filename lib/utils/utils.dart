@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../controllers/auth_controller.dart';
 import '../errors/api_response.dart';
+import '../providers/auth_provider.dart';
 
 final Dio _dio = Dio();
 
@@ -16,18 +18,22 @@ void showSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(snackbar);
 }
 
-Future<ApiResponse> fetchData(String apiEndpoint) async {
+Future<ApiResponse> fetchData(BuildContext context, String apiEndpoint) async {
   try {
-    final authController = AuthController();
-    final storedAuth = await authController.getAuth();
+    // Get the AuthProvider instance
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    if (storedAuth == null) {
+    // Fetch the storedAuth (auth token) from the AuthProvider
+    final user = authProvider.user;
+
+    if (user == null) {
       return ApiResponse(statusCode: 400, message: 'No auth token found!');
     }
 
-    final user = await jsonDecode(storedAuth);
+    // Set the authorization header
     _dio.options.headers['authorization'] = 'Bearer ${user['token']}';
 
+    // Make the API call
     final response = await _dio.get(apiEndpoint);
 
     return ApiResponse(
@@ -38,7 +44,7 @@ Future<ApiResponse> fetchData(String apiEndpoint) async {
   } on DioException catch (error) {
     return ApiResponse(
       statusCode: error.response?.statusCode ?? 500,
-      message: error.response?.data['message'] ?? 'Sign up failed with error',
+      message: error.response?.data['message'] ?? 'Request failed with error',
     );
   } catch (e) {
     return ApiResponse(

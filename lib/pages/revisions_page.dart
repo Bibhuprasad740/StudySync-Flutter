@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:study_sync/controllers/revision_controller.dart';
 
-import '../controllers/add_study_data_modal.dart';
+import '../components/home/add_study_data_modal.dart';
 import '../errors/api_response.dart';
 import '../utils/utils.dart';
 
@@ -20,14 +20,14 @@ class _RevisionsPageState extends State<RevisionsPage> {
   @override
   void initState() {
     super.initState();
-    _getRevisions();
+    _getRevisions(context);
   }
 
   // Fetch revisions from API
-  void _getRevisions() async {
+  void _getRevisions(BuildContext context) async {
     final apiEndpoint = dotenv.env['BACKEND_BASE_URL']! +
         dotenv.env['getAllRevisionsEndpoint']!;
-    ApiResponse response = await fetchData(apiEndpoint);
+    ApiResponse response = await fetchData(context, apiEndpoint);
     if (response.statusCode == 200) {
       setState(() {
         revisionData = response.data;
